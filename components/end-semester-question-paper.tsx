@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 'use client'
 
 import { useState, useMemo } from 'react'
@@ -369,13 +370,11 @@ export function EndSemesterQuestionPaperComponent() {
 
   const renderKitKatPoints = (points: number | null) => {
     if (points === null) return null
-    const candies = Array(points).fill(0)
     return (
       <div className="flex items-center">
-        {candies.map((_, index) => (
+        {Array(points).fill(0).map((_, index) => (
           <Candy key={index} className="w-4 h-4 text-pink-500 mr-1" />
         ))}
-        <span className="text-pink-500 font-semibold ml-1">{points}</span>
       </div>
     )
   }
@@ -395,113 +394,109 @@ export function EndSemesterQuestionPaperComponent() {
         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
       </div>
 
-      <div className="h-[calc(100vh-200px)] overflow-auto border rounded-md">
-        <div className="min-w-full inline-block align-middle">
-          <div className="overflow-hidden">
-            <Table>
-              <TableHeader className="sticky top-0 bg-background z-10">
-                <TableRow>
-                  <TableHead className="w-[250px] bg-background">Name of Student</TableHead>
-                  <TableHead className="bg-background hidden sm:table-cell">Roll No</TableHead>
-                  <TableHead className="bg-background hidden md:table-cell">JLU ID</TableHead>
-                  <TableHead className="bg-background">Attendance</TableHead>
-                  <TableHead className="bg-background">Kit-Kat</TableHead>
-                  <TableHead className="bg-background">Question Paper</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredStudents.map((student) => (
-                  <TableRow key={student.regNo} 
-                    className={`
-                      ${parseInt(student.attendance) === 0 ? 'bg-red-100' : ''}
-                      ${parseInt(student.attendance) > 0 && parseInt(student.attendance) < 50 ? 'bg-red-50' : ''} 
-                      ${student.kitKatPoints ? 'bg-green-50' : ''}
-                    `}
-                  >
-                    <TableCell className="font-medium">
-                      <div className="flex items-center">
-                        <span className="mr-2">{student.name}</span>
-                        {parseInt(student.attendance) === 0 && (
-                          <TooltipProvider>
-                            <Tooltip>
-                              <TooltipTrigger>
-                                <Frown className="text-red-700" size={16} />
-                              </TooltipTrigger>
-                              <TooltipContent>
-                                <p>Zero attendance! Urgent action required!</p>
-                              </TooltipContent>
-                            </Tooltip>
-                          </TooltipProvider>
-                        )}
-                        {parseInt(student.attendance) > 0 && parseInt(student.attendance) < 50 && (
-                          <TooltipProvider>
-                            <Tooltip>
-                              <TooltipTrigger>
-                                <AlertTriangle className="text-red-500" size={16} />
-                              </TooltipTrigger>
-                              <TooltipContent>
-                                <p>Low attendance. Immediate improvement required.</p>
-                              </TooltipContent>
-                            </Tooltip>
-                          </TooltipProvider>
-                        )}
-                        {student.kitKatPoints && (
-                          <TooltipProvider>
-                            <Tooltip>
-                              <TooltipTrigger>
-                                <Trophy className="text-yellow-500" size={16} />
-                              </TooltipTrigger>
-                              <TooltipContent>
-                                <p>Awarded Kit-Kat points for excellent performance!</p>
-                              </TooltipContent>
-                            </Tooltip>
-                          </TooltipProvider>
-                        )}
-                      </div>
-                    </TableCell>
-                    <TableCell className="hidden sm:table-cell">{student.rollNo}</TableCell>
-                    <TableCell className="hidden md:table-cell">{student.regNo}</TableCell>
-                    <TableCell className={`font-semibold ${getAttendanceColor(student.attendance)}`}>
+      <div className="overflow-x-auto border rounded-md">
+        <Table>
+          <TableHeader className="sticky top-0 bg-background z-10">
+            <TableRow>
+              <TableHead className="w-[250px] bg-background">Name of Student</TableHead>
+              <TableHead className="bg-background hidden sm:table-cell">Roll No</TableHead>
+              <TableHead className="bg-background hidden md:table-cell">JLU ID</TableHead>
+              <TableHead className="bg-background">Attendance</TableHead>
+              <TableHead className="bg-background">Kit-Kat</TableHead>
+              <TableHead className="bg-background">Question Paper</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {filteredStudents.map((student) => (
+              <TableRow key={student.regNo} 
+                className={`
+                  ${parseInt(student.attendance) === 0 ? 'bg-red-100' : ''}
+                  ${parseInt(student.attendance) > 0 && parseInt(student.attendance) < 50 ? 'bg-red-50' : ''} 
+                  ${student.kitKatPoints ? 'bg-green-50' : ''}
+                `}
+              >
+                <TableCell className="font-medium">
+                  <div className="flex items-center">
+                    <span className="mr-2">{student.name}</span>
+                    {parseInt(student.attendance) === 0 && (
                       <TooltipProvider>
                         <Tooltip>
                           <TooltipTrigger>
-                            {student.attendance}
+                            <Frown className="text-red-700" size={16} />
                           </TooltipTrigger>
                           <TooltipContent>
-                            <p>{getAttendanceTooltip(student.attendance)}</p>
+                            <p>Zero attendance! Urgent action required!</p>
                           </TooltipContent>
                         </Tooltip>
                       </TooltipProvider>
-                    </TableCell>
-                    <TableCell>
-                      {renderKitKatPoints(student.kitKatPoints)}
-                    </TableCell>
-                    <TableCell>
-                      <Dialog>
-                        <DialogTrigger asChild>
-                          <Button variant="outline" size="sm" className="w-full">
-                            <FileText className="sm:mr-2" size={16} />
-                            <span className="hidden sm:inline-block">View Paper</span>
-                          </Button>
-                        </DialogTrigger>
-                        <DialogContent className="w-full sm:max-w-[80vw] sm:max-h-[90vh] overflow-y-auto">
-                          <DialogHeader>
-                            <DialogTitle>{student.name}'s Question Paper</DialogTitle>
-                          </DialogHeader>
-                          {parseInt(student.attendance) < 50 ? (
-                            <QuestionPaperLow />
-                          ) : (
-                            <QuestionPaper />
-                          )}
-                        </DialogContent>
-                      </Dialog>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-        </div>
+                    )}
+                    {parseInt(student.attendance) > 0 && parseInt(student.attendance) < 50 && (
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger>
+                            <AlertTriangle className="text-red-500" size={16} />
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>Low attendance. Immediate improvement required.</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    )}
+                    {student.kitKatPoints && (
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger>
+                            <Trophy className="text-yellow-500" size={16} />
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>Awarded Kit-Kat points for excellent performance!</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    )}
+                  </div>
+                </TableCell>
+                <TableCell className="hidden sm:table-cell">{student.rollNo}</TableCell>
+                <TableCell className="hidden md:table-cell">{student.regNo}</TableCell>
+                <TableCell className={`font-semibold ${getAttendanceColor(student.attendance)}`}>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger>
+                        {student.attendance}
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>{getAttendanceTooltip(student.attendance)}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </TableCell>
+                <TableCell>
+                  {renderKitKatPoints(student.kitKatPoints)}
+                </TableCell>
+                <TableCell>
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button variant="outline" size="sm" className="w-full">
+                        <FileText className="sm:mr-2" size={16} />
+                        <span className="hidden sm:inline-block">View Paper</span>
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="w-full sm:max-w-[80vw] sm:max-h-[90vh] overflow-y-auto">
+                      <DialogHeader>
+                        <DialogTitle>{student.name}'s Question Paper</DialogTitle>
+                      </DialogHeader>
+                      {parseInt(student.attendance) < 50 ? (
+                        <QuestionPaperLow />
+                      ) : (
+                        <QuestionPaper />
+                      )}
+                    </DialogContent>
+                  </Dialog>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
       </div>
     </div>
   )
