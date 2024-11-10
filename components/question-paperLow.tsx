@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 'use client'
 
 import React, { useState, useEffect } from 'react'
@@ -89,7 +90,7 @@ function MarkingSchemeTable() {
 export default function QuestionPaper() {
   const [activeTab, setActiveTab] = useState("question")
   const [isMobile, setIsMobile] = useState(false)
-  const [openAccordion, setOpenAccordion] = useState<string | null>(null)
+  const [openAccordion, setOpenAccordion] = useState<string>("")
 
   useEffect(() => {
     const checkMobile = () => {
@@ -253,7 +254,7 @@ export default function QuestionPaper() {
               type="single"
               collapsible
               value={openAccordion}
-              onValueChange={(value) => setOpenAccordion(value)}
+              onValueChange={(value) => setOpenAccordion(value || "")}
             >
               <AccordionItem value={item.id} className="border rounded-lg overflow-hidden">
                 <AccordionTrigger className="text-lg font-semibold px-4 py-2">
@@ -268,7 +269,7 @@ export default function QuestionPaper() {
                       variant="outline"
                       size="icon"
                       className="absolute bottom-2 right-2"
-                      onClick={() => setOpenAccordion(null)}
+                      onClick={() => setOpenAccordion("")}
                     >
                       <X className="h-4 w-4" />
                       <span className="sr-only">Close</span>
