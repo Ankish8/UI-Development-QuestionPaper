@@ -6,6 +6,8 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { Button } from "@/components/ui/button"
+import { X } from 'lucide-react'
 
 const markingCriteria = [
   {
@@ -54,29 +56,31 @@ function MarkingSchemeTable() {
         <CardTitle className="text-xl sm:text-2xl font-bold text-center">Marking Scheme</CardTitle>
       </CardHeader>
       <CardContent>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="w-[120px] sm:w-[200px]">Criterion</TableHead>
-              <TableHead className="text-right">Marks</TableHead>
-              <TableHead className="hidden md:table-cell">Description</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {markingCriteria.map((criterion, index) => (
-              <TableRow key={index}>
-                <TableCell className="font-medium">{criterion.criterion}</TableCell>
-                <TableCell className="text-right">{criterion.marks}</TableCell>
-                <TableCell className="hidden md:table-cell">{criterion.description}</TableCell>
+        <div className="overflow-x-auto">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-[120px] sm:w-[200px]">Criterion</TableHead>
+                <TableHead className="text-right">Marks</TableHead>
+                <TableHead className="hidden md:table-cell">Description</TableHead>
               </TableRow>
-            ))}
-            <TableRow>
-              <TableCell className="font-bold">Total</TableCell>
-              <TableCell className="text-right font-bold">{totalMarks}</TableCell>
-              <TableCell className="hidden md:table-cell"></TableCell>
-            </TableRow>
-          </TableBody>
-        </Table>
+            </TableHeader>
+            <TableBody>
+              {markingCriteria.map((criterion, index) => (
+                <TableRow key={index}>
+                  <TableCell className="font-medium">{criterion.criterion}</TableCell>
+                  <TableCell className="text-right">{criterion.marks}</TableCell>
+                  <TableCell className="hidden md:table-cell">{criterion.description}</TableCell>
+                </TableRow>
+              ))}
+              <TableRow>
+                <TableCell className="font-bold">Total</TableCell>
+                <TableCell className="text-right font-bold">{totalMarks}</TableCell>
+                <TableCell className="hidden md:table-cell"></TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+        </div>
       </CardContent>
     </Card>
   )
@@ -85,6 +89,7 @@ function MarkingSchemeTable() {
 export default function QuestionPaper() {
   const [activeTab, setActiveTab] = useState("question")
   const [isMobile, setIsMobile] = useState(false)
+  const [openAccordion, setOpenAccordion] = useState<string | null>(null)
 
   useEffect(() => {
     const checkMobile = () => {
@@ -232,44 +237,70 @@ export default function QuestionPaper() {
   ]
 
   return (
-    <Card className="w-full max-w-4xl mx-auto">
-      <CardHeader>
-        <CardTitle className="text-xl sm:text-2xl md:text-3xl">UI Design for Clinical Decision-Making Software</CardTitle>
-        <CardDescription>End Semester Question Paper</CardDescription>
-      </CardHeader>
-      <CardContent>
-        {isMobile ? (
-          <Accordion type="single" collapsible className="w-full space-y-4">
-            {content.map((item) => (
-              <AccordionItem key={item.id} value={item.id}>
-                <AccordionTrigger className="text-lg font-semibold">{item.title}</AccordionTrigger>
-                <AccordionContent>{item.content}</AccordionContent>
-              </AccordionItem>
-            ))}
-          </Accordion>
-        ) : (
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-5 mb-4">
-              {content.map((item) => (
-                <TabsTrigger key={item.id} value={item.id} className="text-sm sm:text-base">
+    <div className="w-full max-w-4xl mx-auto p-4">
+      <Card className="mb-8">
+        <CardHeader>
+          <CardTitle className="text-xl sm:text-2xl md:text-3xl">UI Design for Clinical Decision-Making Software</CardTitle>
+          <CardDescription>End Semester Question Paper</CardDescription>
+        </CardHeader>
+      </Card>
+
+      {isMobile ? (
+        <div className="space-y-4">
+          {content.map((item) => (
+            <Accordion
+              key={item.id}
+              type="single"
+              collapsible
+              value={openAccordion}
+              onValueChange={(value) => setOpenAccordion(value)}
+            >
+              <AccordionItem value={item.id} className="border rounded-lg overflow-hidden">
+                <AccordionTrigger className="text-lg font-semibold px-4 py-2">
                   {item.title}
-                </TabsTrigger>
-              ))}
-            </TabsList>
-            <Card>
-              <CardContent className="p-4">
-                <ScrollArea className="h-[calc(100vh-250px)]">
-                  {content.map((item) => (
-                    <TabsContent key={item.id} value={item.id} className="mt-0">
+                </AccordionTrigger>
+                <AccordionContent>
+                  <div className="relative">
+                    <div className="p-4 pb-12 max-h-[70vh] overflow-y-auto">
                       {item.content}
-                    </TabsContent>
-                  ))}
-                </ScrollArea>
-              </CardContent>
-            </Card>
-          </Tabs>
-        )}
-      </CardContent>
-    </Card>
+                    </div>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className="absolute bottom-2 right-2"
+                      onClick={() => setOpenAccordion(null)}
+                    >
+                      <X className="h-4 w-4" />
+                      <span className="sr-only">Close</span>
+                    </Button>
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+          ))}
+        </div>
+      ) : (
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <TabsList className="grid w-full grid-cols-5 mb-4">
+            {content.map((item) => (
+              <TabsTrigger key={item.id} value={item.id} className="text-sm sm:text-base">
+                {item.title}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+          <Card>
+            <CardContent className="p-4">
+              <ScrollArea className="h-[calc(100vh-250px)]">
+                {content.map((item) => (
+                  <TabsContent key={item.id} value={item.id} className="mt-0">
+                    {item.content}
+                  </TabsContent>
+                ))}
+              </ScrollArea>
+            </CardContent>
+          </Card>
+        </Tabs>
+      )}
+    </div>
   )
 }
