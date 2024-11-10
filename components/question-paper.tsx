@@ -56,29 +56,31 @@ function MarkingSchemeTable() {
         <CardTitle className="text-xl sm:text-2xl font-bold text-center">Marking Scheme</CardTitle>
       </CardHeader>
       <CardContent>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="w-[120px] sm:w-[200px]">Criterion</TableHead>
-              <TableHead className="text-right">Marks</TableHead>
-              <TableHead className="hidden md:table-cell">Description</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {markingCriteria.map((criterion, index) => (
-              <TableRow key={index}>
-                <TableCell className="font-medium">{criterion.criterion}</TableCell>
-                <TableCell className="text-right">{criterion.marks}</TableCell>
-                <TableCell className="hidden md:table-cell">{criterion.description}</TableCell>
+        <div className="overflow-x-auto">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-[120px] sm:w-[200px]">Criterion</TableHead>
+                <TableHead className="text-right">Marks</TableHead>
+                <TableHead className="hidden md:table-cell">Description</TableHead>
               </TableRow>
-            ))}
-            <TableRow>
-              <TableCell className="font-bold">Total</TableCell>
-              <TableCell className="text-right font-bold">{totalMarks}</TableCell>
-              <TableCell className="hidden md:table-cell"></TableCell>
-            </TableRow>
-          </TableBody>
-        </Table>
+            </TableHeader>
+            <TableBody>
+              {markingCriteria.map((criterion, index) => (
+                <TableRow key={index}>
+                  <TableCell className="font-medium">{criterion.criterion}</TableCell>
+                  <TableCell className="text-right">{criterion.marks}</TableCell>
+                  <TableCell className="hidden md:table-cell">{criterion.description}</TableCell>
+                </TableRow>
+              ))}
+              <TableRow>
+                <TableCell className="font-bold">Total</TableCell>
+                <TableCell className="text-right font-bold">{totalMarks}</TableCell>
+                <TableCell className="hidden md:table-cell"></TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+        </div>
         <div className="mt-4 flex items-center text-sm text-muted-foreground">
           <Candy className="mr-2 h-4 w-4 text-pink-500" />
           <p>Note: Each Kit Kat point will be worth 10 bonus marks, which are not included in the overall total.</p>
@@ -225,14 +227,20 @@ export default function QuestionPaper() {
       </Card>
 
       {isMobile ? (
-        <Accordion type="single" collapsible className="w-full space-y-4">
+        <div className="space-y-4">
           {content.map((item) => (
-            <AccordionItem key={item.id} value={item.id}>
-              <AccordionTrigger className="text-lg font-semibold">{item.title}</AccordionTrigger>
-              <AccordionContent>{item.content}</AccordionContent>
-            </AccordionItem>
+            <Accordion key={item.id} type="single" collapsible>
+              <AccordionItem value={item.id}>
+                <AccordionTrigger className="text-lg font-semibold">{item.title}</AccordionTrigger>
+                <AccordionContent>
+                  <div className="max-h-[60vh] overflow-y-auto pr-4">
+                    {item.content}
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
           ))}
-        </Accordion>
+        </div>
       ) : (
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="grid w-full grid-cols-5 mb-4">
